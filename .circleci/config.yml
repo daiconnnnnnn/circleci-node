@@ -19,15 +19,29 @@ jobs:
             - ./node_modules
       - run:
           name: test
-          command: npm test
+          command: |
+            mkdir reports
+            ./node_modules/.bin/nyc ./node_modules/.bin/mocha --recursive --timeout=10000 --exit --reporter mocha-junit-reporter --reporter-options mochaFile=reports/mocha/test-results.xml
+          when: always
+      - run:
+          name: Code Climateテストレポーターのセットアップ
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+          when: always
       - run:
           name: code-coverage
-          command: './node_modules/.bin/nyc report --reporter=text-lcov'
+          command: |
+            mkdir coverage
+            ./node_modules/.bin/nyc report --reporter=text-lcov > coverage/lcov.info
+            ./cc-test-reporter after-build -t lcov
+          when: always
       - store_artifacts:
-          path: test-results.xml
+          path: ./reports/mocha/test-results.xml
           prefix: tests
       - store_artifacts: 
-          path: coverage
+          path: ./coverage/lcov.info
           prefix: coverage
       - store_test_results:
-          path: test-results.xml
+          path: reports
