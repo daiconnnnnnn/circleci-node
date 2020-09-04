@@ -41,7 +41,7 @@ jobs:
           name: test
           command: |
             mkdir ~/junit
-            mocha test --reporter mocha-junit-reporter
+            ./node_modules/.bin/mocha test --reporter mocha-junit-reporter
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
           when: always
