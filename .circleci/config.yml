@@ -35,7 +35,7 @@ jobs:
           command: |
             mkdir coverage
             ./node_modules/.bin/nyc report --reporter=text-lcov > coverage/lcov.info
-            ./cc-test-reporter after-build -t lcov
+            ./cc-test-reporter after-build -t lcov -r daiconreport
           when: always
       - store_artifacts:
           path: ./reports/mocha/test-results.xml
